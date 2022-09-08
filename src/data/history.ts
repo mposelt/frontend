@@ -552,7 +552,22 @@ export const calculateStatisticsSumGrowth = (
 export const statisticsHaveType = (
   stats: StatisticValue[],
   type: StatisticType
-) => stats.some((stat) => stat[type] !== null);
+) => {
+  type = type === "sum_rel" ? "sum" : type;
+  return stats.some((stat) => stat[type] !== null);
+};
+
+const mean_stat_types: readonly StatisticType[] = ["mean", "min", "max"];
+const sum_stat_types: readonly StatisticType[] = ["sum"];
+
+export const statisticsMetaHasType = (
+  metadata: StatisticsMetaData,
+  type: StatisticType
+) => {
+  if (mean_stat_types.includes(type) && metadata.has_mean) return true;
+  if (sum_stat_types.includes(type) && metadata.has_sum) return true;
+  return false;
+};
 
 export const adjustStatisticsSum = (
   hass: HomeAssistant,
